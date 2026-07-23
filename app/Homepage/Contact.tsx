@@ -1,51 +1,18 @@
 "use client";
 import { useState } from "react";
 
-type FormStatus = "idle" | "sending" | "success" | "error";
-
-const INITIAL_FORM = { name: "", email: "", message: "" };
-
 export default function Contact() {
-  const [formState, setFormState] = useState(INITIAL_FORM);
-  const [status, setStatus] = useState<FormStatus>("idle");
-  const [errorMsg, setErrorMsg] = useState("");
+  const [formState, setFormState] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+  const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("sending");
-    setErrorMsg("");
-
-    const url = process.env.NEXT_PUBLIC_FORMSPREE_URL;
-    if (!url) {
-      setStatus("error");
-      setErrorMsg("Contact form is not configured yet. Please reach out via email.");
-      return;
-    }
-
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(formState),
-      });
-
-      if (res.ok) {
-        setStatus("success");
-        setFormState(INITIAL_FORM);
-      } else {
-        const data: { error?: string } = await res.json().catch(() => ({}));
-        setStatus("error");
-        setErrorMsg(
-          data.error ?? "Something went wrong. Please try again or reach out via email."
-        );
-      }
-    } catch {
-      setStatus("error");
-      setErrorMsg("Network error. Please check your connection and try again.");
-    }
+    // Placeholder: wire up to your preferred email service
+    setSubmitted(true);
   };
 
   const contactLinks = [
@@ -62,8 +29,8 @@ export default function Contact() {
     },
     {
       label: "GitHub",
-      value: "github.com/yourusername",
-      href: "https://github.com/yourusername",
+      value: "MavuneeseZ",
+      href: "https://github.com/MavuneeseZ",
       icon: (
         <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
           <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12" />
@@ -73,8 +40,8 @@ export default function Contact() {
     },
     {
       label: "LinkedIn",
-      value: "linkedin.com/in/yourusername",
-      href: "https://linkedin.com/in/yourusername",
+      value: "[ADD YOUR LINKEDIN]",
+      href: "[ADD YOUR LINKEDIN URL]",
       icon: (
         <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
           <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
@@ -213,7 +180,7 @@ export default function Contact() {
 
           {/* Right: Contact form */}
           <div className="glass-card" style={{ padding: 32 }}>
-            {status === "success" ? (
+            {submitted ? (
               <div
                 style={{
                   textAlign: "center",
@@ -242,10 +209,10 @@ export default function Contact() {
                   Message Sent!
                 </h3>
                 <p style={{ color: "var(--muted)", fontSize: "0.9rem" }}>
-                  Thanks! I&apos;ll get back to you soon.
+                  Thanks for reaching out. I&apos;ll get back to you shortly.
                 </p>
                 <button
-                  onClick={() => setStatus("idle")}
+                  onClick={() => setSubmitted(false)}
                   className="btn-outline"
                   style={{ marginTop: 8 }}
                 >
@@ -279,7 +246,6 @@ export default function Contact() {
                       setFormState({ ...formState, name: e.target.value })
                     }
                     required
-                    disabled={status === "sending"}
                   />
                 </div>
 
@@ -294,7 +260,6 @@ export default function Contact() {
                       setFormState({ ...formState, email: e.target.value })
                     }
                     required
-                    disabled={status === "sending"}
                   />
                 </div>
 
@@ -309,82 +274,14 @@ export default function Contact() {
                       setFormState({ ...formState, message: e.target.value })
                     }
                     required
-                    disabled={status === "sending"}
                   />
                 </div>
 
-                {/* Error banner */}
-                {status === "error" && (
-                  <div
-                    style={{
-                      background: "rgba(239,68,68,0.1)",
-                      border: "1px solid rgba(239,68,68,0.3)",
-                      borderRadius: 10,
-                      padding: "12px 16px",
-                      fontSize: "0.85rem",
-                      color: "#fca5a5",
-                      display: "flex",
-                      alignItems: "flex-start",
-                      gap: 8,
-                    }}
-                  >
-                    <svg
-                      width="16"
-                      height="16"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      style={{ flexShrink: 0, marginTop: 1 }}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
-                      />
-                    </svg>
-                    {errorMsg}
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  className="btn-primary"
-                  style={{
-                    width: "100%",
-                    justifyContent: "center",
-                    opacity: status === "sending" ? 0.7 : 1,
-                    cursor: status === "sending" ? "not-allowed" : "pointer",
-                  }}
-                  disabled={status === "sending"}
-                >
-                  {status === "sending" ? (
-                    <>
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        style={{ animation: "spin-slow 1s linear infinite" }}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M4 12a8 8 0 018-8v4m0-4a8 8 0 010 16v-4m0 4a8 8 0 01-8-8h4"
-                        />
-                      </svg>
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      Send Message
-                      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                      </svg>
-                    </>
-                  )}
+                <button type="submit" className="btn-primary" style={{ width: "100%", justifyContent: "center" }}>
+                  Send Message
+                  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
                 </button>
               </form>
             )}

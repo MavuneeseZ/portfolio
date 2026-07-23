@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 
 const skillCategories = [
   {
@@ -34,6 +35,16 @@ const skillCategories = [
 ];
 
 export default function Skills() {
+  useEffect(() => {
+    const els = document.querySelectorAll("#skills .reveal");
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("is-visible")),
+      { threshold: 0.1 }
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+
   return (
     <section
       id="skills"
@@ -78,10 +89,10 @@ export default function Skills() {
           {skillCategories.map((cat, i) => (
             <div
               key={cat.category}
-              className="glass-card"
+              className="glass-card reveal"
               style={{
                 padding: 28,
-                animationDelay: `${i * 0.1}s`,
+                transitionDelay: `${i * 0.08}s`,
               }}
             >
               {/* Category header */}

@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 
 const projects = [
   {
@@ -26,6 +27,16 @@ const projects = [
 ];
 
 export default function Projects() {
+  useEffect(() => {
+    const els = document.querySelectorAll("#projects .reveal");
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("is-visible")),
+      { threshold: 0.1 }
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+
   return (
     <section id="projects" className="section">
       {/* Orb */}
@@ -62,8 +73,12 @@ export default function Projects() {
             gap: 28,
           }}
         >
-          {projects.map((project) => (
-            <div key={project.title} className="project-card">
+          {projects.map((project, i) => (
+            <div
+              key={project.title}
+              className="project-card reveal"
+              style={{ transitionDelay: `${i * 0.12}s` }}
+            >
               {/* Card header */}
               <div
                 style={{

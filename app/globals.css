@@ -13,6 +13,7 @@
   --card-bg: rgba(28, 28, 40, 0.8);
   --gradient-start: #7c3aed;
   --gradient-end: #06b6d4;
+  --hero-bg: radial-gradient(ellipse 80% 60% at 50% -20%, rgba(124,58,237,0.18) 0%, transparent 70%);
 }
 
 @theme inline {
@@ -86,6 +87,10 @@ body {
   from { opacity: 0; transform: translateX(40px); }
   to   { opacity: 1; transform: translateX(0); }
 }
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
 .animate-fade-in-up  { animation: fadeInUp 0.7s ease forwards; }
 .animate-fade-in     { animation: fadeIn 0.7s ease forwards; }
@@ -96,6 +101,17 @@ body {
 .animate-blink       { animation: blink 1s step-end infinite; }
 .animate-slide-left  { animation: slide-in-left 0.7s ease forwards; }
 .animate-slide-right { animation: slide-in-right 0.7s ease forwards; }
+
+/* Scroll-reveal: elements start hidden, .is-visible triggers animation */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
 
 /* Glass card */
 .glass-card {
@@ -253,7 +269,8 @@ nav ul a:hover { color: var(--accent-light); }
 .skill-pill:hover {
   background: rgba(124, 58, 237, 0.25);
   border-color: var(--accent-light);
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 14px rgba(124,58,237,0.2);
 }
 
 /* Project card */
@@ -270,8 +287,8 @@ nav ul a:hover { color: var(--accent-light); }
 }
 .project-card:hover {
   border-color: var(--accent-light);
-  transform: translateY(-6px);
-  box-shadow: 0 24px 48px rgba(124, 58, 237, 0.15);
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 28px 56px rgba(124, 58, 237, 0.22), 0 0 0 1px rgba(167,139,250,0.1);
 }
 
 /* Contact form */
@@ -293,9 +310,61 @@ nav ul a:hover { color: var(--accent-light); }
 .form-group input:focus,
 .form-group textarea:focus { border-color: var(--accent-light); }
 
-/* Responsive */
+/* ── Responsive ─────────────────────────────── */
+
+/* Mobile nav: show hamburger, hide desktop links/CTA */
 @media (max-width: 768px) {
   .section-title { font-size: 1.9rem; }
-  nav ul { gap: 16px; }
-  .section { padding: 70px 0; }
+  .section { padding: 60px 0; }
+
+  /* Hide desktop links + CTA, show hamburger */
+  nav > ul    { display: none !important; }
+  nav > a.btn-primary { display: none !important; }
+  #mobile-menu-btn { display: flex !important; }
+
+  /* Mobile dropdown */
+  .mobile-menu {
+    position: fixed;
+    top: 65px;
+    left: 0;
+    right: 0;
+    background: rgba(10,10,15,0.97);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 24px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    z-index: 99;
+    animation: fadeInUp 0.2s ease;
+  }
+  .mobile-menu a {
+    font-size: 1.1rem;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover, .mobile-menu a.active { color: var(--accent-light); }
+  .mobile-menu .btn-primary {
+    margin-top: 4px;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+/* Tablet: collapse 2-col grids to 1-col */
+@media (max-width: 860px) {
+  .about-grid   { grid-template-columns: 1fr !important; gap: 40px !important; }
+  .contact-grid { grid-template-columns: 1fr !important; gap: 32px !important; }
+}
+
+/* Chatbot: stay within screen on very small widths */
+@media (max-width: 400px) {
+  .chatbot-panel {
+    right: 8px !important;
+    left: 8px !important;
+    width: auto !important;
+    bottom: 88px !important;
+  }
 }

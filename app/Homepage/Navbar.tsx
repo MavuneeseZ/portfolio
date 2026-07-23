@@ -16,7 +16,6 @@ export default function Navbar() {
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 50);
-      // Determine active section
       const sections = ["hero", "about", "skills", "projects", "contact"];
       for (const id of [...sections].reverse()) {
         const el = document.getElementById(id);
@@ -32,7 +31,16 @@ export default function Navbar() {
 
   return (
     <nav
+      className={`navbar ${scrolled ? "scrolled" : ""}`}
       style={{
+        position: "fixed",
+        top: 0,
+        width: "100%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        padding: "1rem 5%",
+        zIndex: 1000,
         background: scrolled
           ? "rgba(10,10,15,0.95)"
           : "rgba(10,10,15,0.5)",
@@ -41,8 +49,7 @@ export default function Navbar() {
         transition: "all 0.3s ease",
       }}
     >
-      {/* Logo */}
-      <a href="#hero" className="logo" style={{ textDecoration: "none" }}>
+      <a href="#hero" className="logo" style={{ textDecoration: "none", fontWeight: "bold", fontSize: "1.2rem" }}>
         MDF
         <span
           style={{
@@ -58,65 +65,79 @@ export default function Navbar() {
         />
       </a>
 
-      {/* Desktop nav */}
-      <ul style={{ margin: 0 }}>
+      <ul
+        className={`nav-menu ${mobileOpen ? "open" : ""}`}
+        style={{
+          display: "flex",
+          gap: "2rem",
+          listStyle: "none",
+          margin: 0,
+          padding: 0,
+        }}
+      >
         {navLinks.map((link) => (
           <li key={link.href}>
             <a
               href={link.href}
+              onClick={() => setMobileOpen(false)}
               style={{
                 color:
                   activeSection === link.href.slice(1)
                     ? "var(--accent-light)"
                     : "var(--muted)",
+                textDecoration: "none",
                 position: "relative",
               }}
             >
               {link.label}
-              {activeSection === link.href.slice(1) && (
-                <span
-                  style={{
-                    position: "absolute",
-                    bottom: -4,
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    width: 4,
-                    height: 4,
-                    borderRadius: "50%",
-                    background: "var(--accent-light)",
-                  }}
-                />
-              )}
             </a>
           </li>
         ))}
       </ul>
 
-      {/* CTA Button */}
-      <a href="#contact" className="btn-primary" style={{ padding: "8px 20px", fontSize: "0.85rem" }}>
-        Hire Me
-      </a>
+      <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+        <a href="#contact" className="btn-primary" style={{ padding: "8px 20px", fontSize: "0.85rem", textDecoration: "none" }}>
+          Hire Me
+        </a>
 
-      {/* Mobile menu button */}
-      <button
-        onClick={() => setMobileOpen(!mobileOpen)}
-        style={{
-          display: "none",
-          background: "none",
-          border: "none",
-          color: "var(--foreground)",
-          cursor: "pointer",
-          padding: 4,
-        }}
-        id="mobile-menu-btn"
-        aria-label="Toggle mobile menu"
-      >
-        <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          {mobileOpen
-            ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
-        </svg>
-      </button>
+        <button
+          id="mobile-menu-btn"
+          onClick={() => setMobileOpen(!mobileOpen)}
+          style={{
+            display: "none",
+            background: "none",
+            border: "none",
+            color: "var(--foreground)",
+            cursor: "pointer",
+          }}
+          aria-label="Toggle mobile menu"
+        >
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            {mobileOpen
+              ? <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              : <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />}
+          </svg>
+        </button>
+      </div>
+
+      {/* Mobile dropdown — styled by .mobile-menu in globals.css */}
+      {mobileOpen && (
+        <div className="mobile-menu">
+          {navLinks.map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className={activeSection === link.href.slice(1) ? "active" : ""}
+              onClick={() => setMobileOpen(false)}
+            >
+              {link.label}
+            </a>
+          ))}
+          <a href="#contact" className="btn-primary" onClick={() => setMobileOpen(false)}>
+            Hire Me
+          </a>
+        </div>
+      )}
     </nav>
   );
 }

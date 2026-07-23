@@ -81,6 +81,7 @@ export default function Chatbot() {
         <div
           role="dialog"
           aria-label="Chat with Maven's AI assistant"
+          className="chatbot-panel"
           style={{
             position: "fixed",
             bottom: 96,

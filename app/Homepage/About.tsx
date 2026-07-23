@@ -1,4 +1,5 @@
 "use client";
+import { useEffect } from "react";
 
 export default function About() {
   const stats = [
@@ -7,6 +8,16 @@ export default function About() {
     { label: "Years Learning", value: "3+" },
     { label: "Cup of Coffee", value: "∞" },
   ];
+
+  useEffect(() => {
+    const els = document.querySelectorAll("#about .reveal");
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && e.target.classList.add("is-visible")),
+      { threshold: 0.12 }
+    );
+    els.forEach((el) => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
 
   return (
     <section id="about" className="section">
@@ -27,6 +38,7 @@ export default function About() {
         <h2 className="section-title gradient-text">About Me</h2>
 
         <div
+          className="about-grid reveal"
           style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
