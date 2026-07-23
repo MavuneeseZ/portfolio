@@ -1,5 +1,10 @@
-import { redirect } from "next/navigation";
+import Image from "next/image";
+import HomePage from "./Homepage/page";
 
-export default function RootPage() {
-  redirect("/Homepage");
+export default function Home() {
+  return (
+    <>
+      <HomePage />
+    </>
+  );
 }
